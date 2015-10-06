@@ -1,0 +1,17 @@
+{
+	"tablename": "",
+	"add/deletePermission": "",
+	"numRows": "",
+	"columns": {
+		"column": {
+			"name": "",
+			"datatype": "",
+			"viewPermission": "",
+			"editPermision": "",
+			"maxLength": "",
+			"defaultValue": "",
+			"showByDefault": "true",
+			"required": "true"
+		}
+	}
+}

@@ -1,0 +1,25 @@
+{
+	"username": "admin",
+	"timezone": "MST",
+	"themecolor": "",
+	"firstname": "",
+	"lastname": "",
+	"email": "",
+	"phone": "",
+	"bio": "",
+	"permissions": {
+		"login": "view",
+		"admin": "view",
+		"users": "edit",
+		"tables": "",
+		"account": "",
+		"exportdata": "",
+		"importdata": ""
+	},
+	"favorites": {
+		"home": ""
+	},
+	"quicklinks": {
+		"quicklink1": ""
+	}
+}
