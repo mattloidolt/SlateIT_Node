@@ -6,8 +6,10 @@ router.get('/', function(req, res) {
     res.render('index', { title: 'Express' });
 });
 
+/* handle the request for information */
 router.get('/request', function (req, res) {
-    // handle the request for information
+    var requestHandle = require('requestHandler');
+    requestHandle.handleRequest(req, res);
 });
 
 module.exports = router;
