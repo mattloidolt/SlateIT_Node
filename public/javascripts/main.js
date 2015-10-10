@@ -1,6 +1,6 @@
 // contains main calls that are commonly used by many of the other js files
 
-var url = 'http://127.0.0.1:8181/'
+var url = 'http://localhost/'
 
 function get(uri, callback) {
     $.ajax(url + 'request?' + uri, {
