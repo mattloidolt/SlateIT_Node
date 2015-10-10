@@ -21,5 +21,9 @@
 	},
 	"quicklinks": {
 		"quicklink1": ""
+	},
+	"settings": {
+		"color": "",
+		"timeout": ""
 	}
 }
