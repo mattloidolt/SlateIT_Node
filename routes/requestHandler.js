@@ -4,7 +4,8 @@ var mongoClient = require('mongodb').MongoClient;
 function handleRequest(req, res) {
 	// main function to figure out what type of request this is
 	if (req.method === 'GET') {
-		mongoClient.connect('', function (err, db) {
+		// connect to the test database on the localhost
+		mongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
 			if (err) throw err;
 
 			var myResponseJson;
