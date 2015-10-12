@@ -1,5 +1,5 @@
 {
-	"option1": {"name": "", "link": ""},
-	"option2": {"name": "", "link": ""},
-	"option3": {"name": "", "link": ""}
+	"option1": {"name": "", "title": "", "link": ""},
+	"option2": {"name": "", "title": "", "link": ""},
+	"option3": {"name": "", "title": "", "link": ""}
 }

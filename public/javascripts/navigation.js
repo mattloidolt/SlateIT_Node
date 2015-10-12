@@ -4,12 +4,48 @@
 
 var main = require('main');
 
+function updateUL(Options, ulName) {
+	var ul = document.getElementById(ulName);
+	var somethingAdded = false;
+	for (var option in Options) {
+		if (Options[option] != "") {
+			var li = document.createElement("li");
+			var a = document.createElement("a");
+			a.appendChild(document.createTextNode(option["name"]));
+			if (option["title"] != "") {
+				a.title = option["title"];
+			}
+			if (option["link"] != "") {
+				a.href = option["link"];
+			}
+			li.appendChild(a);
+			ul.appendChild(li);
+			somethingAdded = true;
+		}
+    }
+	if (!somethingAdded) {
+		$("ul." + ul.id).hide()
+	}
+}
+
+function updateAll(user) {
+	updateAdmin(user);
+	updateSystem(user);
+	updateFavorites(user);
+	updateQuickLinks(user);
+}
+
 function updateAdmin(user) {
 	// requests from the server the admin options that should be available to this user
 	// then updates the admin drop down at the top of the page
 	var requestURI = 'Type=updateAdmin&userID=' + user.userID;
 	main.get(requestURI, function (res) {
-		user.adminOptions = res.Options;
+		//var Options = res.Options;
+		var Options = {
+			"option1": {"name": "Manage Users", "link": "/users"}
+		}
+		user.adminOptions = Options;
+		updateUL(Options, "ddAdmin");
 	});
 }
 
@@ -18,7 +54,9 @@ function updateSystem(user) {
 	// then updates the system drop down at the top of the page
 	var requestURI = 'Type=updateSystem&userID=' + user.userID;
 	main.get(requestURI, function (res) {
-		user.systemOptions = res.options;
+		var Options = res.Options;
+		user.systemOptions = Options;
+		updateUL(Options, "ddSystem");
 	});
 }
 
@@ -28,7 +66,9 @@ function updateFavorites(user) {
 	// this should also update the favorites section of the user variable in the login script
 	var requestURI = 'Type=updateFavorites&userID=' + user.userID;
 	main.get(requestURI, function (res) {
-		user.favorites = res.options;
+		var Options = res.Options;
+		user.favorites = Options;
+		updateUL(Options, "ddFavorites");
 	});
 }
 
@@ -38,6 +78,8 @@ function updateQuickLinks(user) {
 	// this should also update the quick links section of the user variable in the login script
 	var requestURI = 'Type=updateQuickLinks&userID=' + user.userID;
 	main.get(requestURI, function (res) {
-		user.quickLinks = res.options;
+		var Options = res.Options;
+		user.quickLinks = Options;
+		updateUL(Options, "ddQuickLinks");
 	});
 }

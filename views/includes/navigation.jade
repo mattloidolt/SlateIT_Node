@@ -8,25 +8,18 @@ nav
 						i(class="material-icons") search
 		a(href="#!", class="brand-logo center") SlateIT (logo)
 		ul(id='nav-mobile' class='right hide-on-med-and-down')
+			ul(id='ddFavorites' class='dropdown-content')
+			li(class='dropdown-button', href='#!', data-beloworigin='true', data-constrainwidth='false', data-activates='ddFavorites')
+				i(class='right material-icons') star_border
+			ul(id='ddQuickLinks' class='dropdown-content')
+			li(class='dropdown-button', href='#!', data-beloworigin='true', data-constrainwidth='false', data-activates='ddQuickLinks')
+				i(class='right material-icons') flash_on
 			ul(id='ddAdmin' class='dropdown-content')
-				li
-					a(id='table', href='') Users
-				li
-					a(href="/tableview") Permissions
-				li
-					a(href="/tableview") Create Table
-				li
-					a(href="/tableview") Edit Tables
-				li
-					a(href="/tableview") Sys Settings
 			li(class='dropdown-button', href='#!', data-beloworigin='true', data-constrainwidth='false', data-activates='ddAdmin') Admin
 				i(class='right material-icons') verified_user
 			ul(id='ddSystem' class='dropdown-content')
-				li
-					a(href='/profile') Profile
-				li
-					a(href='/logout') Log Off
 			li(class='dropdown-button', href='#!', data-beloworigin='true', data-constrainwidth='false', data-activates='ddSystem') Username
 				i(class='material-icons right') settings
-	script(src='./javascripts/main.js')
-		update
+	script(src='./javascripts/user.js')
+	script(src='./javascripts/navigation.js')
+	script(type='text/javascript') updateAll(window.user);
