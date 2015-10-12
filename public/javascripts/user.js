@@ -6,7 +6,7 @@ var main = require('main.js');
 var sessionTimeout = 0;
 // temporary user information filled in for testing
 var user = {
-	"userID": "1",
+	"_id": "1",
 	"username": "admin",
 	"timezone": "MST",
 	"firstname": "",
