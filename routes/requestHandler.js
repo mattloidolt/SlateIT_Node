@@ -1,37 +1,40 @@
 // This is for the code to handle an incomming data request, get the data, and send the json back to the client
 
-function handleRequest(req, res) {
-	// main function to figure out what type of request this is
-	if (req.method === 'GET') {
-		// connect to the test database on the localhost
-		mongoClient.connect('mongodb://localhost:27017/test', function (err, db) {
-			if (err) throw err;
 
-			var myResponseJson;
-			var tableRequests = require('tableRequests');
-			var userRequests = require('userRequests');
-			if (req.Type == "TableInfo") {
-				myResponseJson = tableRequests.getTable(req, db);
-			} else if (req.Type == "Row") {
-				myResponseJson = tableRequests.getRow(req, db);
-			} else if (req.Type == "Rows") {
-				myResponseJson = tableRequests.getRows(req, db);
-			} else if (req.Type == "numRecords") {
-				myResponseJson = tableRequests.getNumRecords(req, db);
-			} else if (req.Type == "Login") {
-				myResponseJson = userRequests.getLogin(req, db);
-			} else if (req.Type == "updateAdmin") {
-				myResponseJson = userRequests.updateAdmin(req, db);
-			} else if (req.Type == "updateSystem") {
-				myResponseJson = userRequests.updateSystem(req, db);
-			} else if (req.Type == "updateFavorites") {
-				myResponseJson = userRequests.updateFavorites(req, db);
-			} else if (req.Type == "updateQuickLinks") {
-				myResponseJson = userRequests.updateQuickLinks(req, db);
+function handleRequest(req, res, next) {
+	var MongoClient = require('mongodb').MongoClient,
+		Server = require('mongodb').Server;
+
+	var mongoClient = new MongoClient(new Server("localhost", 27017, { 'native_parser': true }))
+	var db = mongoClient('test');
+	var myResponseJson;
+
+	mongoClient.open(function (err, mongoClient) {
+		if (err) throw err;
+		// main function to figure out what type of request this is
+		if (req.method === 'GET') {
+			if (req.query.Type == "TableInfo") {
+				myResponseJson = require('tableRequests').getTable(req, db, next);
+			} else if (req.query.Type == "Row") {
+				myResponseJson = require('tableRequests').getRow(req, db, next);
+			} else if (req.query.Type == "Rows") {
+				myResponseJson = require('tableRequests').getRows(req, db, next);
+			} else if (req.query.Type == "numRecords") {
+				myResponseJson = require('tableRequests').getNumRecords(req, db, next);
+			} else if (req.query.Type == "updateAdmin") {
+				myResponseJson = require('userRequests').updateAdmin(req, db, next);
+			} else if (req.query.Type == "updateSystem") {
+				myResponseJson = require('userRequests').updateSystem(req, db, next);
+			} else if (req.query.Type == "updateFavorites") {
+				myResponseJson = require('userRequests').updateFavorites(req, db, next);
+			} else if (req.query.Type == "updateQuickLinks") {
+				myResponseJson = require('userRequests').updateQuickLinks(req, db, next);
 			}
 			res.writeHead(200, { 'content-type': 'application/json' });
-			res.write( JSON.stringify(myResponseJson) );
-        	res.end('\n');
-		});
-	}
+			res.write(JSON.stringify(myResponseJson));
+			res.end('\n');
+		} else if (req.method === 'POST') {
+			myResponseJson = require('userRequests').getLogin(req, db, next);
+		}
+	});
 }
