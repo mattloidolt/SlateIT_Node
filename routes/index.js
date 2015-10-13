@@ -16,9 +16,4 @@ router.get('/request', function (req, res) {
     requestHandle.handleRequest(req, res);
 });
 
-/* handle the unrecognized routes */
-router.get('*', function (req, res) {
-    res.render('error', { "error": {"status": "404", "stack": "Page Not Found"}});
-});
-
 module.exports = router;
