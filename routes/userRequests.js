@@ -11,11 +11,9 @@ function getLogin(req, db, next) {
 		next(Error("No Password Sent"));
 	} else {
 		db.collection('users').findOne({ "username": username, "password": password}, function (err, doc) {
-			if (err) throw err;
-
-			// DO SOMETHING TO SEE IF A USER WAS RETURNED
-
 			db.close();
+			if (err) throw err;
+			return doc;
 		});
 	}
 }

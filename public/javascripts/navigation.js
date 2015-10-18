@@ -2,8 +2,6 @@
 // This script should check permissions before deciding what options are available
 // This will also contain the ajax code for the search box
 
-var main = require('main');
-
 function updateUL(Options, ulName) {
 	var ul = document.getElementById(ulName);
 	var somethingAdded = false;
@@ -39,13 +37,13 @@ function updateAdmin(user) {
 	// requests from the server the admin options that should be available to this user
 	// then updates the admin drop down at the top of the page
 	var requestURI = 'Type=updateAdmin&userID=' + user.userID;
-	main.get(requestURI, function (res) {
+	$.getJSON(requestURI, function (data) {
 		//var Options = res.Options;
 		var Options = {
 			"option1": {"name": "Manage Users", "link": "/users"}
 		}
-		user.adminOptions = Options;
-		updateUL(Options, "ddAdmin");
+		user.adminOptions = data;
+		updateUL(user.adminOptions, "ddAdmin");
 	});
 }
 
