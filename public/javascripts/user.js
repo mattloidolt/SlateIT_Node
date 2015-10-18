@@ -2,48 +2,7 @@
 // This will also be the script that renders the 're-login' pop-up when a session times out
 // The check 'check session' should be called for every page in the system
 
-var sessionTimeout = 0;
-// temporary user information filled in for testing
-var user = {
-	"_id": "1",
-	"username": "admin",
-	"timezone": "MST",
-	"firstname": "",
-	"lastname": "",
-	"email": "",
-	"phone": "",
-	"bio": "",
-	"permissions": {
-		"login": "view",
-		"admin": "view",
-		"users": "edit",
-		"tables": "",
-		"account": "",
-		"exportdata": "",
-		"importdata": ""
-	},
-	"favorites": {
-		"home": ""
-	},
-	"quicklinks": {
-		"quicklink1": ""
-	},
-	"adminOptions": {
-		"Users": "",
-		"Permissions": "",
-		"CreateTables": "",
-		"EditTables": "",
-		"SysSettings": ""
-	},
-	"systemOptions": {
-		"Profile": "",
-		"LogOff": ""
-	},
-	"settings": {
-		"color": "",
-		"timeout": ""
-	}
-}
+var user;
 
 function checkSession() {
 	// check if the user has not reached the timeout for their session
@@ -54,7 +13,7 @@ function userLogin() {
 	// executes the login:
 	var username = document.getElementById('username').value;
 	var password = document.getElementById('password').value;
-	$.getJSON('/request?Type=login&username=' + username + '&password=' + password + '&', function(data) {
+	$.getJSON('/request?Type=logIn&username=' + username + '&password=' + password + '&', function (data) {
 		if (typeof data._id == 'undefined') {
 			// invalid login, need to say password is wrong
 			window.location.replace("/");
@@ -63,7 +22,32 @@ function userLogin() {
 			user = data;
 			window.location.replace("/home");
 		}
-		
 	});
-	
 }
+
+function getUser() {
+	// updates userinformation based on just username
+	var username = 'matt'; // later, this will come from the session
+	$.getJSON('/request?Type=getUser&username=' + username + '&', function (data) {
+		if (typeof data._id == 'undefined') {
+			// invalid login, need to say password is wrong
+			window.location.replace("/");
+		} else {
+			// successfully found the user, update the information
+			user = data;
+		}
+	});
+}
+
+function checkPermission(permissionStr, ptype) {
+	var permission = user.permissions[permissionStr];
+	if (typeof permission == 'undefined') {
+		return false;
+	} else if (permission == "edit") {
+		return true;
+	} else if (ptype == "view" && permission == "view") {
+		return true;
+	}
+	return false;
+}
+

@@ -1,12 +1,7 @@
 {
 	"username": "admin",
-	"timezone": "MST",
-	"themecolor": "",
 	"firstname": "",
 	"lastname": "",
-	"email": "",
-	"phone": "",
-	"bio": "",
 	"permissions": {
 		"login": "view",
 		"admin": "view",
@@ -15,15 +10,5 @@
 		"account": "",
 		"exportdata": "",
 		"importdata": ""
-	},
-	"favorites": {
-		"linkname": "request URL"
-	},
-	"quicklinks": {
-		"linkname": "request URL"
-	},
-	"settings": {
-		"color": "",
-		"timeout": ""
 	}
 }

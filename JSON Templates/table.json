@@ -1,17 +1,19 @@
 {
 	"tablename": "",
-	"add/deletePermission": "",
+	"permission": "",
 	"numRows": "",
-	"columns": {
-		"column": {
+	"columns": [
+		{
 			"name": "",
+			"alias": "",
 			"datatype": "",
-			"viewPermission": "",
-			"editPermision": "",
+			"permission": "",
 			"maxLength": "",
+			"defaultNumRows": "50",
 			"defaultValue": "",
 			"showByDefault": "true",
-			"required": "true"
+			"required": "true",
+			"tooltip":""
 		}
-	}
+	]
 }

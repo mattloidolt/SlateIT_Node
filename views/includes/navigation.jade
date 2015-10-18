@@ -1,11 +1,10 @@
 nav
 	div(class="nav-wrapper")
-		form
+		form(id='tableSearchForm')
 			div(class="input-field left")
-				form(id="searchBox", method="post", action="/home")
-					input(id="search", type="search", name="Table", required)
-					label(for="search")
-						i(class="material-icons") search
+				input(id="tableSearchBox", type="search", name="Table", required)
+				label(for="search")
+					i(class="material-icons") search
 		a(href="#!", class="brand-logo center") SlateIT (logo)
 		ul(id='nav-mobile' class='right hide-on-med-and-down')
 			ul(id='ddFavorites' class='dropdown-content')
@@ -21,5 +20,5 @@ nav
 			li(class='dropdown-button', href='#!', data-beloworigin='true', data-constrainwidth='false', data-activates='ddSystem') Username
 				i(class='material-icons right') settings
 	script(src='./javascripts/user.js')
-	script(src='./javascripts/navigation.js')
-	script(type='text/javascript') updateAll(window.user);
+	script(src='./javascripts/tableview.js')
+	script(type='text/javascript') getUser();
