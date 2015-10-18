@@ -6,6 +6,7 @@ $("#tableSearchForm").submit(function (e) {
 });
 
 var Table;
+var rows;
 
 function getTable() {
 	var tablename = document.getElementById('tableSearchBox').value.toLowerCase();
@@ -41,15 +42,16 @@ function getTable() {
 	});
 }
 
-function getTableRows(numRows) {
+function getTableRows() {
 	if (typeof Table != 'undefined') {
 		$.getJSON('/request?Type=getRows&table=' + Table.tablename + '&', function (data) {
+			rows = data;
 			// loop through each of the rows
 			var tableBody = $('#mainTableBody');
 			tableBody.empty();
 			var canEdit = checkPermission(Table.permission, "edit");
-			for (var i = 0; i < data.length; i++) {
-				var row = data[i];
+			for (var i = 0; i < rows.length; i++) {
+				var row = rows[i];
 				var html = "<tr><td style='padding:0'><i class='material-icons'>remove_red_eye</i></td>";
 				if (canEdit) {
 					html += "<td style='padding:0'><i class='material-icons'>border_color</i></td>";
@@ -60,14 +62,20 @@ function getTableRows(numRows) {
 					var column = Table.columns[j];
 					if (typeof row[column.name] != 'undefined') {
 						// we have found the column, time to print it.
-						html += "<td>" + row[column.name] + "</td>";
+						html += "<td>";
+						if (typeof row[column.name] == 'object') {
+							html += "<i class='material-icons'>view_list</i>";
+						} else {
+							html += row[column.name];
+						}
+						html += "</td>";
 					}
 					else {
 						html += "<td></td>";
 					}
 				}
 				html += "</tr>";
-				tableBody.append(html);
+				tableBody.append(html); // print this row to the screen
 			}
 		});
 	}
