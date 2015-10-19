@@ -7,39 +7,63 @@ $("#tableSearchForm").submit(function (e) {
 
 var Table;
 var rows;
+var modals = { "modals": [] };
 
 function getTable() {
 	var tablename = document.getElementById('tableSearchBox').value.toLowerCase();
 	var mainDiv = $('#mainDiv');
 	mainDiv.empty();
-	
+
+	if (typeof Table == 'undefined') {
+		getTableSub(tablename);
+	} else if (Table == null) {
+		getTableSub(tablename);
+	} else {
+		if (tablename == Table.tablename.toLowerCase()) {
+			printHeader();
+			getTableRows();
+		} else {
+			getTableSub(tablename);
+		}
+	}
+}
+
+function getTableSub(tablename) {
 	$.getJSON('/request?Type=getTable&table=' + tablename + '&', function (data) {
 		Table = data;
-		var html = "<table class='responsive-table striped'>";
-		html += "<thead><tr class='header'><th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='View'> </th>";
-		if (checkPermission(Table.permission, "edit")) {
-			html += "<th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='Edit'> </th>";
-			html += "<th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='Delete'> </th>";
-		}
-		for (var i = 0; i < Table.columns.length; i++) {
-			var column = Table.columns[i];
-			if (checkPermission(column.permission, "view")) {
-				if (typeof column.tooltip == 'undefined') {
-					html += "<th class='header'>" + column.alias + "</th>";
-				} else {
-					html += "<th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='" + column.tooltip + "'>" + column.alias + "</th>";
-				}
-			} else {
-				Table.columns[i] = null;
-				delete Table.columns[i];
+		if (typeof Table != 'undefined') {
+			if (Table != null) {
+				printHeader();
+				getTableRows();
 			}
 		}
-		html += "</tr></thead><tbody id='mainTableBody'></tbody></table>";
-		var mainDiv = $('#mainDiv');
-		mainDiv.empty();
-		mainDiv.append(html);
-		getTableRows();
 	});
+}
+
+function printHeader() {
+	var html = "<table class='responsive-table striped'>";
+	html += "<thead><tr class='header'><th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='View'> </th>";
+	if (checkPermission(Table.permission, "edit")) {
+		html += "<th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='Edit'> </th>";
+		html += "<th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='Delete'> </th>";
+	}
+	for (var i = 0; i < Table.columns.length; i++) {
+		var column = Table.columns[i];
+		if (checkPermission(column.permission, "view")) {
+			if (typeof column.tooltip == 'undefined') {
+				html += "<th class='header'>" + column.alias + "</th>";
+			} else {
+				html += "<th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='" + column.tooltip + "'>" + column.alias + "</th>";
+			}
+		} else {
+			Table.columns[i] = null;
+			delete Table.columns[i];
+		}
+	}
+	html += "</tr></thead><tbody id='mainTableBody'></tbody></table>";
+	var mainDiv = $('#mainDiv');
+	mainDiv.empty();
+	mainDiv.append(html);
 }
 
 function getTableRows() {
@@ -52,7 +76,9 @@ function getTableRows() {
 			var canEdit = checkPermission(Table.permission, "edit");
 			for (var i = 0; i < rows.length; i++) {
 				var row = rows[i];
-				var html = "<tr><td style='padding:0'><i class='material-icons'>remove_red_eye</i></td>";
+				var id = "view" + Table.tablename + row._id;
+				var modal = "<div id='" + id + "' class='modal'><div class='modal-content'><div class='row'>";
+				var html = "<tr><td style='padding:0'><a href=\"javascript:writeAndOpenModal('" + id + "');\"><i class='material-icons'>remove_red_eye</i></a></td>";
 				if (canEdit) {
 					html += "<td style='padding:0'><i class='material-icons'>border_color</i></td>";
 					html += "<td style='padding:0'><i class='material-icons'>delete</i></td>";
@@ -63,21 +89,78 @@ function getTableRows() {
 					if (typeof row[column.name] != 'undefined') {
 						// we have found the column, time to print it.
 						html += "<td>";
+						modal += "<div class='card grey lighten-4 col s6 m4 l3'><div class='card-content'><span class='card-title black-text'><b>" + column.alias + "</b></span>";
 						if (typeof row[column.name] == 'object') {
-							html += "<i class='material-icons'>view_list</i>";
+							var subId = "view" + id + "_" + column.name;
+							html += "<a href=\"javascript:writeAndOpenModal('" + subId + "');\"><i class='material-icons'>view_list</i></a>";
+							modal += "<p><a href=\"javascript:writeAndOpenModal('" + subId + "');\"><i class='material-icons'>view_list</i></a><p>";
+							addListModal(row[column.name], subId);
 						} else {
 							html += row[column.name];
+							modal += "<p>" + row[column.name] + "</p>";
 						}
 						html += "</td>";
+						modal += "</div></div>";
 					}
 					else {
 						html += "<td></td>";
+						modal += "<div class='card grey lighten-4 col s6 m4 l3'><div class='card-content'><span class='card-title black-text'><b>" + column.alias + "</b></span><p><br></p></div></div>";
 					}
 				}
 				html += "</tr>";
+				modal += "</div></div><div class='modal-footer'><a href='#!' class='modal-action modal-close waves-effect waves-green btn-flat' onclick='document.getElementById(\"" + id + "\").remove();'>Back</a></div></div>";
 				tableBody.append(html); // print this row to the screen
+				modals['modals'].push({ "id": id, "modal": modal });
 			}
 		});
 	}
+}
 
+function writeAndOpenModal(id) {
+	var modalStorage = $('#modalStorage');
+	var myModal;
+	for (var i = 0; i < modals['modals'].length; i++) {
+		if (modals['modals'][i]['id'] == id) {
+			myModal = modals['modals'][i]['modal'];
+			break;
+		}
+	}
+	modalStorage.append(myModal);
+	
+	// write and append to modal storage
+	
+	$('#' + id).openModal();
+}
+
+function addListModal(obj, id) {
+	var modal = "<div id='" + id + "' class='modal'><div class='modal-content'><div class='row'>";
+	for (var key in obj) {
+		modal += "<div class='card grey lighten-4 col s12 m12 l12'><div class='card-content'><span class='card-title black-text'><b>" + key + "</b></span>";
+		modal += "<p>" + obj[key] + "</p></div></div>";
+	}
+	modal += "</div></div><div class='modal-footer'><a href='#!' class='modal-action modal-close waves-effect waves-green btn-flat' onclick='document.getElementById(\"" + id + "\").remove();'>Back</a></div></div>";
+
+	modals['modals'].push({ "id": id, "modal": modal });
+}
+
+function getTableSuggestions() {
+	var search = document.getElementById('tableSearchBox').value.toLowerCase();
+	var suggesstionBox = $("#table-search-suggesstion-box");
+	suggesstionBox.empty();
+
+	$.getJSON('/request?Type=getTableNames&search=' + search + '&', function (data) {
+		if (data != null) {
+			var html = "<ul id='table-search-suggesstion-box-inner'>";
+			for (var i = 0; i < data.length; i++) {
+				for (var key in data[i]) {
+					html += "<li>" + data[i][key] + "</li>";
+					break;
+				}
+			}
+			html += "</ul>";
+			var suggesstionBox = $("#table-search-suggesstion-box");
+			suggesstionBox.empty();
+			suggesstionBox.append(html);
+		}
+	});
 }

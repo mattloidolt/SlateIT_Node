@@ -16,6 +16,14 @@ module.exports = {
 		db.collection(tableName).find({}).toArray(function (err, docs) {
 			cb(docs);
 		});
+	},
+	
+	getTableNames: function (req, db, next, cb) {
+		var search = ((typeof req.body.search == 'undefined') ? req.query.search : req.body.search);
+		db.collection('tables').find({"tablename": { $regex : search }}, { 'tablename': true, '_id':false }).limit(10).toArray(function (err, doc) {
+			if (err) throw err;
+			cb(doc);
+		});
 	}
 }
 

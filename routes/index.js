@@ -31,6 +31,12 @@ var handleRequest = function (req, res, next) {
 			var userRequests = require('./userRequests');
 			var tableRequests = require('./tableRequests');
 			switch (req.query.Type) {
+				case "getTableNames":
+					tableRequests.getTableNames(req, db, next, function (myResponseJson) {
+						db.close();
+						res.json(myResponseJson);
+					});
+					break;
 				case "logIn":
 					userRequests.getLogin(req, db, next, function (myResponseJson) {
 						db.close();
