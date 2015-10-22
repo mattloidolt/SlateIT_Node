@@ -42,6 +42,7 @@ function getTableSub(tablename) {
 
 function printHeader() {
 	var html = "<table class='responsive-table striped'>";
+	html += "<h1 id=tablename>" + Table.tablename + "</h1>";
 	html += "<thead><tr class='header'><th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='View'> </th>";
 	if (checkPermission(Table.permission, "edit")) {
 		html += "<th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='Edit'> </th>";

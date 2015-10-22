@@ -1,6 +1,10 @@
 // scripts for the profile page
 // profile page should allow the user to add an Avitar image, change background colors, edit favorites, and edit their information
 
+$("#favorites").click(function (e){
+	var tablename =  document.getElementById("#tablename");
+});
+
 function saveAvitar(req, res) {
 	// sends the new Avitar image to the server to be saved
 }
