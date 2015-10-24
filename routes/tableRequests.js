@@ -1,29 +1,31 @@
 // handles the various requests for information related to the tableview on the client side
 
 module.exports = {
-	getTableInfo: function (req, db, next, cb) {
+	getTableInfo: function (req, db, next) {
 		// for getting the table information requested and returning the json for it to the client
 		var tableName = ((typeof req.body.table == 'undefined') ? req.query.table : req.body.table);
 		db.collection('tables').findOne({ "tablename": tableName }, function (err, doc) {
 			if (err) throw err;
-			cb(doc);
+			next(doc);
 		});
 	},
 
-	getRows: function (req, db, next, cb) {
+	getRows: function (req, db, next) {
 		// for getting a set of x rows and returning the json for them to the client
 		var tableName = ((typeof req.body.table == 'undefined') ? req.query.table : req.body.table);
 		db.collection(tableName).find({}).toArray(function (err, docs) {
-			cb(docs);
+			next(docs);
 		});
 	},
-	
-	getTableNames: function (req, db, next, cb) {
+
+	getAutoCompleteTables: function (req, db, next) {
 		var search = ((typeof req.body.search == 'undefined') ? req.query.search : req.body.search);
-		db.collection('tables').find({"tablename": { $regex : search }}, { 'tablename': true, '_id':false }).limit(10).toArray(function (err, doc) {
-			if (err) throw err;
-			cb(doc);
-		});
+		var cursor = db.collection('tables').find({ "tablename": { $regex: search } }, { 'tablename': true, '_id': false }).limit(10).toArray();
+		var doc = [];
+		for (var i = 0; i < cursor.length; i++) {
+			doc.push(cursor[i].tablename);
+		}
+		next(doc);
 	}
 }
 

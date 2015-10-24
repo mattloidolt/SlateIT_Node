@@ -26,44 +26,53 @@ var handleRequest = function (req, res, next) {
 
 	MongoClient.connect(connectionurl, function (err, db) {
 		if (err) throw err;
+		var reqType = ((typeof req.body.Type == 'undefined') ? req.query.Type : req.body.Type);
 		// main function to figure out what type of request this is
-		if (req.method === 'GET') {
-			var userRequests = require('./userRequests');
-			var tableRequests = require('./tableRequests');
-			switch (req.query.Type) {
-				case "getTableNames":
-					tableRequests.getTableNames(req, db, next, function (myResponseJson) {
-						db.close();
-						res.json(myResponseJson);
-					});
-					break;
-				case "logIn":
-					userRequests.getLogin(req, db, next, function (myResponseJson) {
-						db.close();
-						res.json(myResponseJson);
-					});
-					break;
-				case "getUser":
-					userRequests.getUserInfo(req, db, next, function (myResponseJson) {
-						db.close();
-						res.json(myResponseJson);
-					});
-					break;
-				case "getTable":
-					tableRequests.getTableInfo(req, db, next, function (myResponseJson) {
-						db.close();
-						res.json(myResponseJson);
-					});
-					break;
-				case "getRows":
-					tableRequests.getRows(req, db, next, function (myResponseJson) {
-						db.close();
-						res.json(myResponseJson);
-					});
-					break;
-			}
-		} else if (req.method === 'POST') {
-
+		var userRequests = require('./userRequests');
+		var tableRequests = require('./tableRequests');
+		var sessionHandler = require('./sessionHandler');
+		switch (reqType) {
+			case "getSession":
+				sessionHandler.isLoggedIn(req, db, function (myResponseJson) {
+					db.close();
+					res.json(myResponseJson);
+				});
+				break;
+			case "getAutoCompleteTables":
+				tableRequests.getAutoCompleteTables(req, db, function (myResponseJson) {
+					db.close();
+					res.json(myResponseJson);
+				});
+				break;
+			case "logIn":
+				userRequests.getLogin(req, sessionHandler, db, function (myResponseJson) {
+					db.close();
+					res.json(myResponseJson);
+				});
+				break;
+			case "logOut":
+				sessionHandler.endSession(req.cookies.session, db, function (myResponseJson) {
+					db.close();
+				});
+				break;
+			case "getUser":
+				userRequests.getUserInfo(req, db, function (myResponseJson) {
+					db.close();
+					res.json(myResponseJson);
+				});
+				break;
+			case "getTable":
+				tableRequests.getTableInfo(req, db, function (myResponseJson) {
+					db.close();
+					res.json(myResponseJson);
+				});
+				break;
+			case "getRows":
+				tableRequests.getRows(req, db, function (myResponseJson) {
+					db.close();
+					res.json(myResponseJson);
+				});
+				break;
 		}
 	});
 }

@@ -11,8 +11,8 @@ var modals = { "modals": [] };
 
 function getTable() {
 	var tablename = document.getElementById('tableSearchBox').value.toLowerCase();
-	var mainDiv = $('#mainDiv');
-	mainDiv.empty();
+	$('#mainDiv').empty();
+	$("#tablenameHolder").empty();
 
 	if (typeof Table == 'undefined') {
 		getTableSub(tablename);
@@ -41,8 +41,8 @@ function getTableSub(tablename) {
 }
 
 function printHeader() {
+	document.getElementById("tablenameHolder").innerHTML = " - " + Table.tablename;
 	var html = "<table class='responsive-table striped'>";
-	html += "<h1 id=tablename>" + Table.tablename + "</h1>";
 	html += "<thead><tr class='header'><th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='View'> </th>";
 	if (checkPermission(Table.permission, "edit")) {
 		html += "<th class='header tooltipped' data-position='below' data-delay='700' data-tooltip='Edit'> </th>";
@@ -62,9 +62,7 @@ function printHeader() {
 		}
 	}
 	html += "</tr></thead><tbody id='mainTableBody'></tbody></table>";
-	var mainDiv = $('#mainDiv');
-	mainDiv.empty();
-	mainDiv.append(html);
+	$('#mainDiv').empty().append(html);
 }
 
 function getTableRows() {
@@ -127,9 +125,9 @@ function writeAndOpenModal(id) {
 		}
 	}
 	modalStorage.append(myModal);
-	
+
 	// write and append to modal storage
-	
+
 	$('#' + id).openModal();
 }
 
@@ -146,22 +144,8 @@ function addListModal(obj, id) {
 
 function getTableSuggestions() {
 	var search = document.getElementById('tableSearchBox').value.toLowerCase();
-	var suggesstionBox = $("#table-search-suggesstion-box");
-	suggesstionBox.empty();
 
-	$.getJSON('/request?Type=getTableNames&search=' + search + '&', function (data) {
-		if (data != null) {
-			var html = "<ul id='table-search-suggesstion-box-inner'>";
-			for (var i = 0; i < data.length; i++) {
-				for (var key in data[i]) {
-					html += "<li>" + data[i][key] + "</li>";
-					break;
-				}
-			}
-			html += "</ul>";
-			var suggesstionBox = $("#table-search-suggesstion-box");
-			suggesstionBox.empty();
-			suggesstionBox.append(html);
-		}
+	$.getJSON('/request?Type=getAutoCompleteTables&search=' + search + '&', function (data) {
+		$("#tableSearchBox").autocomplete({source:data});
 	});
 }
